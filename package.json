@@ -1,32 +1,48 @@
 {
   "private": true,
   "main": "main/index.js",
-  "productName": "ElectronTypescriptNext",
+  "productName": "Flowing",
   "scripts": {
     "clean": "rimraf dist main renderer/out renderer/.next",
-    "dev": "npm run build-electron && electron .",
+    "dev": "pnpm run build-electron && electron .",
+    "dev:analyze": "ANALYZE=true pnpm run build-electron && electron .",
     "build-renderer": "next build renderer",
     "build-electron": "tsc -p electron-src",
-    "build": "npm run build-renderer && npm run build-electron",
-    "pack-app": "npm run build && electron-builder --dir",
-    "dist": "npm run build && electron-builder",
+    "build": "pnpm run build-renderer && pnpm run build-electron",
+    "pack-app": "pnpm run build && electron-builder --dir",
+    "dist": "pnpm run build && electron-builder",
     "type-check": "tsc -p ./renderer/tsconfig.json && tsc -p ./electron-src/tsconfig.json"
   },
   "dependencies": {
-    "electron-is-dev": "^1.1.0",
+    "electron-is-dev": "^2.0.0",
     "electron-next": "^3.1.5",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "rete": "^2.0.1",
+    "rete-area-plugin": "^2.0.0",
+    "rete-connection-plugin": "^2.0.0",
+    "rete-react-plugin": "^2.0.1"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^13.4.11",
     "@types/node": "^14.14.6",
     "@types/react": "^16.9.9",
     "@types/react-dom": "^16.9.9",
-    "electron": "^13",
-    "electron-builder": "^23.0.3",
-    "next": "latest",
+    "autoprefixer": "^10.4.14",
+    "electron": "^25.3.1",
+    "electron-builder": "^24.4.0",
+    "eslint": "^8.45.0",
+    "eslint-config-next": "^13.4.11",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-unused-imports": "^3.0.0",
+    "next": "^13.4.11",
+    "postcss": "^8.4.26",
+    "prettier": "^3.0.0",
+    "prettier-plugin-tailwindcss": "^0.4.1",
     "rimraf": "^3.0.0",
-    "typescript": "^4.0.5"
+    "tailwindcss": "^3.3.3",
+    "typescript": "^5.1.6"
   },
   "build": {
     "asar": true,
@@ -34,5 +50,8 @@
       "main",
       "renderer/out"
     ]
+  },
+  "volta": {
+    "node": "20.5.0"
   }
 }

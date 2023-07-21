@@ -1,11 +1,14 @@
-import { User } from '../interfaces'
+export type User = {
+  id: number
+  name: string
+}
 
 /** Dummy user data. */
 export const dataArray: User[] = [
-  { id: 101, name: 'Alice' },
-  { id: 102, name: 'Bob' },
-  { id: 103, name: 'Caroline' },
-  { id: 104, name: 'Dave' },
+  { id: 101, name: "Alice" },
+  { id: 102, name: "Bob" },
+  { id: 103, name: "Caroline" },
+  { id: 104, name: "Dave" },
 ]
 
 /**
@@ -17,7 +20,7 @@ export async function findData(id: number | string) {
   const selected = dataArray.find((data) => data.id === Number(id))
 
   if (!selected) {
-    throw new Error('Cannot find user')
+    throw new Error("Cannot find user")
   }
 
   return selected
@@ -27,7 +30,7 @@ export async function findData(id: number | string) {
 export async function findAll() {
   // Throw an error, just for example.
   if (!Array.isArray(dataArray)) {
-    throw new Error('Cannot find users')
+    throw new Error("Cannot find users")
   }
 
   return dataArray
