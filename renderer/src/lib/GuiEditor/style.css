@@ -1,0 +1,14 @@
+/* エッジ */
+.react-flow__edge-path {
+  stroke-width: 3px;
+  @apply stroke-stone-700;
+}
+
+.react-flow__edge.selected > .react-flow__edge-path {
+  @apply stroke-red-300;
+}
+
+.step-highlight {
+  color: #d38cff !important;
+  font-weight: bold !important;
+}

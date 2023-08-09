@@ -1,4 +1,3 @@
-// @ts-ignore
 import { createRoot } from "react-dom/client"
 import { NodeEditor, GetSchemes, ClassicPreset } from "rete"
 import { AreaPlugin, AreaExtensions } from "rete-area-plugin"
@@ -6,18 +5,28 @@ import { ClassicFlow, ConnectionPlugin, getSourceTarget } from "rete-connection-
 import { ReactPlugin, Presets, ReactArea2D } from "rete-react-plugin"
 import { DataflowEngine } from "rete-engine"
 import { AutoArrangePlugin, Presets as ArrangePresets } from "rete-auto-arrange-plugin"
+import {
+  ContextMenuExtra,
+  ContextMenuPlugin,
+  Presets as ContextMenuPresets,
+} from "rete-context-menu-plugin"
+import { structures } from "rete-structures"
 
+import * as ContextMenuComponents from "./ui/context-menu"
 import { ConnProps, NodeProps } from "./type"
 import { ApiCall } from "./nodes/api-call"
-import ApiCallNodeComponent from "./ui/api-call"
+import ApiCallNodeComponent from "./ui/api-call/ApiCall"
 import { CustomNodeComponent } from "./ui/custom-node"
 import SocketComponent from "./ui/socket"
 import ConnectionComponent from "./ui/connection"
 import { Connection } from "./connection"
 import { Socket } from "./socket"
+import { addCustomBackground } from "./custom-background"
+import { Start } from "./nodes/start"
+import { End } from "./nodes/end"
 
 type Schemes = GetSchemes<NodeProps, ConnProps>
-type AreaExtra = ReactArea2D<Schemes>
+type AreaExtra = ReactArea2D<Schemes> | ContextMenuExtra
 
 export async function createEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>()
@@ -95,11 +104,80 @@ export async function createEditor(container: HTMLElement) {
   area.use(render)
   area.use(arrange)
 
+  const process = () => {
+    dataflow.reset()
+    editor.getNodes().forEach((n) => dataflow.fetch(n.id))
+
+    const graph = structures(editor)
+    const x = graph.roots()
+
+    const root = graph.roots().mapping.nodes()[0]?.id
+    if (root == null) {
+      return
+    }
+
+    const unfoldIds = graph
+      .outgoers(root)
+      .mapping.nodes()
+      .map((n) => n.id)
+
+    // YMLファイルへの変換をかませる
+    // const nodeTree = { id: root, children: [] }
+
+    // while (0 < unfoldIds.length) {
+    //   const id = unfoldIds.pop()!
+    //   const node = editor.getNode(id)
+    // }
+  }
+
+  editor.addPipe((context) => {
+    if (["connectioncreated", "connectionremoved"].includes(context.type)) {
+      process()
+    }
+    return context
+  })
+
+  // Context Menu
+  const contextMenu = new ContextMenuPlugin<Schemes>({
+    items: ContextMenuPresets.classic.setup([
+      [
+        "API Call",
+        () =>
+          new ApiCall({
+            method: "post",
+            path: "/health",
+            header: {},
+            query: {},
+            pathParams: {},
+            queryParams: {},
+            body: {},
+          }),
+      ],
+      ["Start", () => new Start()],
+      ["End", () => new End()],
+    ]),
+  })
+  area.use(contextMenu)
+
+  render.addPreset(
+    Presets.contextMenu.setup({
+      customize: {
+        main: () => ContextMenuComponents.Menu,
+        item: () => ContextMenuComponents.Item,
+        common: () => ContextMenuComponents.Common,
+        search: () => ContextMenuComponents.Search,
+        subitems: () => ContextMenuComponents.Subitems,
+      },
+    }),
+  )
+
   AreaExtensions.simpleNodesOrder(area)
   AreaExtensions.showInputControl(area)
   AreaExtensions.selectableNodes(area, AreaExtensions.selector(), {
     accumulating: AreaExtensions.accumulateOnCtrl(),
   })
+
+  addCustomBackground(area)
 
   // 以下初期設定
   const apiCall1 = new ApiCall({
@@ -123,16 +201,6 @@ export async function createEditor(container: HTMLElement) {
     body: {},
   })
   await editor.addNode(apiCall2)
-
-  // const a = new ClassicPreset.Node("A")
-  // a.addControl("a", new ClassicPreset.InputControl("text", { initial: "a" }))
-  // a.addOutput("a", new ClassicPreset.Output(socket))
-  // await editor.addNode(a)
-
-  // const b = new ClassicPreset.Node("B")
-  // b.addControl("b", new ClassicPreset.InputControl("text", { initial: "b" }))
-  // b.addInput("b", new ClassicPreset.Input(socket))
-  // await editor.addNode(b)
 
   await editor.addConnection(new ClassicPreset.Connection(apiCall1, "success", apiCall2, "input"))
 
