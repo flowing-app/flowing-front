@@ -2,7 +2,7 @@ import { Node } from "reactflow"
 import { dump } from "js-yaml"
 
 import { BlockData } from "@/lib/GuiEditor/type"
-import { ipc } from "@/utils/rpc"
+import { ipc } from "@/utils/ipc"
 
 export type ExecTestResult = {
   total: number
