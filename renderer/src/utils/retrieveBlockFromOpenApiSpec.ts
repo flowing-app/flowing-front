@@ -1,11 +1,11 @@
 import { OpenAPIV3_1 } from "openapi-types"
 import { dereference } from "@apidevtools/json-schema-ref-parser"
 
-import { BlockData } from "@/lib/GuiEditor/type"
-import { Json } from "@/type/json"
-
 import { HTTP_METHODS } from "./httpMethod"
 import { getExampleJsonFromRequestBody } from "./getExampleJsonFromMediaTypeObject"
+
+import { BlockData } from "@/lib/GuiEditor/type"
+import { Json } from "@/type/json"
 
 export const retrieveBlockFromOpenApiSpec = async (
   apiSpec: OpenAPIV3_1.Document,

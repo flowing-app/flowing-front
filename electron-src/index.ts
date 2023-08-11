@@ -15,8 +15,8 @@ app.on("ready", async () => {
       body: dumped,
     })
     const data = await res.json()
-    console.log("data==========")
-    console.log(data)
+    console.log("==data==========")
+    console.log(data.results[0])
     return data
   })
 
