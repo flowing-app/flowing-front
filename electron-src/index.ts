@@ -25,9 +25,12 @@ app.on("ready", async () => {
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    titleBarStyle: "hidden",
+    titleBarOverlay: true,
     webPreferences: {
       preload: join(__dirname, "preload.js"),
     },
+    trafficLightPosition: { x: 16, y: 16 },
   })
 
   const url = isDev

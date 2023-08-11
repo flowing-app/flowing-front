@@ -1,6 +1,7 @@
 import React from "react"
 
 import "./global.css"
+import Titlebar from "@/components/Titlebar"
 
 export type LayoutProps = {
   children?: React.ReactNode
@@ -9,7 +10,10 @@ export type LayoutProps = {
 const Layout = ({ children }: LayoutProps) => {
   return (
     <html lang="ja">
-      <body>{children}</body>
+      <body className="flex flex-col">
+        <Titlebar />
+        <div className="w-full grow">{children}</div>
+      </body>
     </html>
   )
 }

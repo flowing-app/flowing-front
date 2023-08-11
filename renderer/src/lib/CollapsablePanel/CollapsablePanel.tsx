@@ -14,14 +14,14 @@ const CollapsablePanel = ({ children }: CollapsablePanelProps) => {
 
   return (
     <div>
-      <div className="absolute top-1 right-1" hidden={isOpen}>
+      <div className="absolute top-[52px] right-1" hidden={isOpen}>
         <button onClick={toggleIsOpen} className="p-4 text-stone-800 hover:text-stone-400">
           <FiCode size={20} />
         </button>
       </div>
       <div
         data-open={isOpen}
-        className="absolute right-1 w-[50vw] max-w-[640px] inset-y-1 rounded-xl overflow-y-scroll border-l-stone-700 border-l transition data-[open='false']:translate-x-[calc(100%+8px)]"
+        className="absolute right-1 w-[50vw] max-w-[640px] top-[52px] bottom-1 rounded-xl overflow-y-scroll border-l-stone-700 border-l transition data-[open='false']:translate-x-[calc(100%+8px)]"
         style={{
           padding: "0 16px 16px 16px",
           background: "#1E1E1E",
