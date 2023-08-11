@@ -1,6 +1,6 @@
-import path, { join } from "path"
+import { join } from "path"
 import { format } from "url"
-import { ChildProcess, exec } from "child_process"
+import { ChildProcess } from "child_process"
 
 import { BrowserWindow, app, ipcMain } from "electron"
 import isDev from "electron-is-dev"
@@ -10,7 +10,7 @@ let childProcess: ChildProcess
 
 app.on("ready", async () => {
   ipcMain.handle("exec-scenario", async (_, dumped: string) => {
-    const res = await fetch(`http://127.0.0.1:8082/runn`, {
+    const res = await fetch(`http://127.0.0.1:8080/runn`, {
       method: "POST",
       body: dumped,
     })
@@ -40,24 +40,24 @@ app.on("ready", async () => {
 
   mainWindow.loadURL(url)
 
-  const cmd = isDev
-    ? path.join(__dirname, "../app/bin/flowing")
-    : path.join(process.resourcesPath, "app/bin/flowing")
+  // const cmd = isDev
+  //   ? path.join(__dirname, "../app/bin/flowing")
+  //   : path.join(process.resourcesPath, "app/bin/flowing")
 
-  childProcess = exec(`${cmd} -p 8082`, (...logs) => {
-    console.log(...logs)
-  })
-  childProcess.stdout?.on("data", (data) => {
-    console.log(`Child process stdout: ${data}`)
-  })
+  // childProcess = exec(`${cmd} -p 8082`, (...logs) => {
+  //   console.log(...logs)
+  // })
+  // childProcess.stdout?.on("data", (data) => {
+  //   console.log(`Child process stdout: ${data}`)
+  // })
 
-  childProcess.stderr?.on("data", (data) => {
-    console.error(`Child process stderr: ${data}`)
-  })
+  // childProcess.stderr?.on("data", (data) => {
+  //   console.error(`Child process stderr: ${data}`)
+  // })
 
-  childProcess.on("close", (code) => {
-    console.log(`Child process exited with code ${code}`)
-  })
+  // childProcess.on("close", (code) => {
+  //   console.log(`Child process exited with code ${code}`)
+  // })
 })
 
 app.on("window-all-closed", () => {
