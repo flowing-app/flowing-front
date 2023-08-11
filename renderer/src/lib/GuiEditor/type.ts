@@ -18,7 +18,7 @@ export type BlockData = {
   path: string
   method: HttpMethod
   // summary?: string
-  // operationId?: string
+  operationId: string
 } & Omit<OpenAPIV3_1.OperationObject, "method" | "id"> & {
     input: {
       test: string

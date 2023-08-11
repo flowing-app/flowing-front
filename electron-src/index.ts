@@ -1,22 +1,31 @@
-// Native
-import { join } from "path"
+import path, { join } from "path"
 import { format } from "url"
+import { ChildProcess, exec } from "child_process"
 
-// Packages
-import { BrowserWindow, app, ipcMain, IpcMainEvent } from "electron"
+import { BrowserWindow, app, ipcMain } from "electron"
 import isDev from "electron-is-dev"
 import prepareNext from "electron-next"
 
-// Prepare the renderer once the app is ready
+let childProcess: ChildProcess
+
 app.on("ready", async () => {
+  ipcMain.handle("exec-scenario", async (_, dumped: string) => {
+    const res = await fetch(`http://127.0.0.1:8082/runn`, {
+      method: "POST",
+      body: dumped,
+    })
+    const data = await res.json()
+    console.log("data==========")
+    console.log(data)
+    return data
+  })
+
   await prepareNext("./renderer")
 
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
-      nodeIntegration: false,
-      contextIsolation: false,
       preload: join(__dirname, "preload.js"),
     },
   })
@@ -30,13 +39,30 @@ app.on("ready", async () => {
       })
 
   mainWindow.loadURL(url)
+
+  const cmd = isDev
+    ? path.join(__dirname, "../app/bin/flowing")
+    : path.join(process.resourcesPath, "app/bin/flowing")
+
+  childProcess = exec(`${cmd} -p 8082`, (...logs) => {
+    console.log(...logs)
+  })
+  childProcess.stdout?.on("data", (data) => {
+    console.log(`Child process stdout: ${data}`)
+  })
+
+  childProcess.stderr?.on("data", (data) => {
+    console.error(`Child process stderr: ${data}`)
+  })
+
+  childProcess.on("close", (code) => {
+    console.log(`Child process exited with code ${code}`)
+  })
 })
 
-// Quit the app once all windows are closed
-app.on("window-all-closed", app.quit)
-
-// listen the channel `message` and resend the received message to the renderer process
-ipcMain.on("message", (event: IpcMainEvent, message: any) => {
-  console.log(message)
-  setTimeout(() => event.sender.send("message", "hi from electron"), 500)
+app.on("window-all-closed", () => {
+  if (!childProcess.killed) {
+    childProcess.kill()
+  }
+  return app.quit()
 })

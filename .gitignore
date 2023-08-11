@@ -39,3 +39,5 @@ renderer/.next/
 renderer/out
 main/
 dist/
+
+app/bin/
