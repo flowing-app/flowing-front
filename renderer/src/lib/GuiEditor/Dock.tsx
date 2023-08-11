@@ -2,11 +2,11 @@ import React, { Fragment, useState } from "react"
 import { MdOutlineDragIndicator } from "react-icons/md"
 import { FiSearch } from "react-icons/fi"
 
-import { HTTP_METHODS_COLORS } from "@/utils/httpMethod"
-import { useFuzzySearch } from "@/utils/useFuzzySearch"
-
 import { BlockData } from "./type"
 import { useDropToAdd } from "./hook/useDropToAdd"
+
+import { HTTP_METHODS_COLORS } from "@/utils/httpMethod"
+import { useFuzzySearch } from "@/utils/useFuzzySearch"
 
 type DockProps = {
   blocks: BlockData[]
