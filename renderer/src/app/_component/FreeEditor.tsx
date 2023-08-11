@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from "react"
 import { Node } from "reactflow"
 
+import type { editor } from "monaco-editor/esm/vs/editor/editor.api"
+
 import CodeEditor from "@/lib/CodeEditor/CodeEditor"
 import { BlockData } from "@/lib/GuiEditor/type"
-import { useEditorStore } from "@/store"
-
-import type { editor } from "monaco-editor/esm/vs/editor/editor.api"
+import { useStore } from "@/store"
 
 type FreeEditorProps = {
   node: Node<BlockData> | null
@@ -13,7 +13,7 @@ type FreeEditorProps = {
 
 const FreeEditor = ({ node }: FreeEditorProps) => {
   const [editor, setEditor] = useState<editor.IStandaloneCodeEditor>()
-  const updateNodeData = useEditorStore((store) => store.updateNodeData)
+  const updateNodeData = useStore((store) => store.updateNodeData)
   const prevDecorations = useRef<string[]>([])
 
   useEffect(() => {

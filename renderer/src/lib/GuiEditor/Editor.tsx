@@ -15,7 +15,7 @@ import { useDropToAddEditor } from "./hook/useDropToAdd"
 import StartNode from "./ui/StartNode/StartNode"
 import { useDeletableEdge } from "./hook/useDeletableEdge"
 
-import { useEditorStore } from "@/store"
+import { useStore } from "@/store"
 
 import "reactflow/dist/style.css"
 import "./style.css"
@@ -29,8 +29,7 @@ type EditorProps = {
 
 export const Editor = ({ blocks }: EditorProps) => {
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null)
-  const { nodes, setNodes, onNodesChange, edges, setEdges, onEdgesChange, onConnect } =
-    useEditorStore()
+  const { nodes, setNodes, onNodesChange, edges, setEdges, onEdgesChange, onConnect } = useStore()
 
   const deletableEdgeProps = useDeletableEdge(setEdges)
   const { reactFlowWrapper, dragProps } = useDropToAddEditor(reactFlowInstance, setNodes)

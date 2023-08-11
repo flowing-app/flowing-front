@@ -6,7 +6,7 @@ import { Node } from "reactflow"
 import FreeEditor from "./FreeEditor"
 
 import { useBodyEditState } from "@/store/bodyEdit"
-import { useEditorStore } from "@/store"
+import { useStore } from "@/store"
 import { BlockData } from "@/lib/GuiEditor/type"
 
 type CodeEditorTabProps = {
@@ -18,7 +18,7 @@ type CodeEditorTabProps = {
 const CodeEditorTab = ({ onOpenChange, openApi, scenario }: CodeEditorTabProps) => {
   const [tab, setTab] = useState("scenario")
   const { nodeId, update } = useBodyEditState()
-  const node = useEditorStore((store) => store.nodes.find((node) => node.id === nodeId) ?? null) as
+  const node = useStore((store) => store.nodes.find((node) => node.id === nodeId) ?? null) as
     | Node<BlockData>
     | undefined
 

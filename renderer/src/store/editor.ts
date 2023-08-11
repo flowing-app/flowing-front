@@ -1,4 +1,4 @@
-import { create } from "zustand"
+import { StateCreator } from "zustand"
 import {
   Connection,
   Edge,
@@ -12,13 +12,13 @@ import {
   applyNodeChanges,
   applyEdgeChanges,
 } from "reactflow"
-import { useMemo } from "react"
 
 import { BlockData } from "@/lib/GuiEditor/type"
+import { resolveNodes } from "@/logic/resolveNodes"
 
 const initialNodes = [{ id: "start", type: "start", data: {}, position: { x: 100, y: 100 } }]
 
-type RFState = {
+export type RFSlice = {
   nodes: Node[]
   edges: Edge[]
   setNodes: React.Dispatch<React.SetStateAction<Node<any>[]>>
@@ -26,11 +26,13 @@ type RFState = {
   setEdges: React.Dispatch<React.SetStateAction<Edge<any>[]>>
   onEdgesChange: OnEdgesChange
   onConnect: OnConnect
-  getFlow: () => Node[]
   updateNodeData: (id: string, data: Partial<BlockData>) => void
+
+  getFlow: () => { nodes: Node[]; edges: Edge[] }
+  getResolvedNodes: () => Node[]
 }
 
-export const useEditorStore = create<RFState>((set, get) => ({
+export const createRfSlice: StateCreator<RFSlice, [], [], RFSlice> = (set, get) => ({
   nodes: initialNodes,
   edges: [],
   setNodes: (update) => {
@@ -71,39 +73,13 @@ export const useEditorStore = create<RFState>((set, get) => ({
       }
     })
   },
+
   getFlow: () => {
     const { nodes, edges } = get()
-    const startNode = nodes.find((node) => node.type === "start")
-    const res: Node[] = []
-    let next = startNode
-    while (next != null) {
-      const edge = edges.find((edge) => edge.source === next?.id)
-      next = nodes.find((node) => node.id === edge?.target)
-      if (next != null) {
-        res.push(next)
-      } else {
-        next = undefined
-      }
-    }
-    return res
+    return { nodes, edges }
   },
-}))
-
-export const useFlattenNodes = () => {
-  const { nodes, edges } = useEditorStore()
-  return useMemo(() => {
-    const startNode = nodes.find((node) => node.type === "start")
-    const res: Node[] = []
-    let next = startNode
-    while (next != null) {
-      const edge = edges.find((edge) => edge.source === next?.id)
-      next = nodes.find((node) => node.id === edge?.target)
-      if (next != null) {
-        res.push(next)
-      } else {
-        next = undefined
-      }
-    }
-    return res
-  }, [edges, nodes])
-}
+  getResolvedNodes: () => {
+    const { nodes, edges } = get()
+    return resolveNodes(nodes, edges)
+  },
+})

@@ -3,16 +3,16 @@ import { Handle, NodeProps, Position } from "reactflow"
 import TextareaAutosize from "react-textarea-autosize"
 import { FiEdit } from "react-icons/fi"
 
+import SectionAccordion from "./SectionAccordion"
+
 import { BlockData } from "@/lib/GuiEditor/type"
 import { HTTP_METHODS_COLORS } from "@/utils/httpMethod"
 import { useBodyEditState } from "@/store/bodyEdit"
-import { useEditorStore } from "@/store"
+import { useStore } from "@/store"
 import InlineEditor from "@/app/_component/InlineEditor"
 
-import SectionAccordion from "./SectionAccordion"
-
 const ApiCallNode = ({ id, selected, data }: NodeProps<BlockData>) => {
-  const updateNodeData = useEditorStore((store) => store.updateNodeData)
+  const updateNodeData = useStore((store) => store.updateNodeData)
   const { update } = useBodyEditState()
 
   return (
