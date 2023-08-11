@@ -67,7 +67,7 @@
     "react-dom": "18.2.0",
     "react-icons": "^4.10.1",
     "react-textarea-autosize": "^8.5.2",
-    "reactflow": "^11.7.4",
+    "reactflow": "^11.8.1",
     "rete": "^2.0.2",
     "rete-area-plugin": "^2.0.0",
     "rete-auto-arrange-plugin": "^2.0.0",
