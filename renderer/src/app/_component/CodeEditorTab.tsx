@@ -3,11 +3,11 @@ import * as Tabs from "@radix-ui/react-tabs"
 import { FiX } from "react-icons/fi"
 import { Node } from "reactflow"
 
+import FreeEditor from "./FreeEditor"
+
 import { useBodyEditState } from "@/store/bodyEdit"
 import { useEditorStore } from "@/store"
 import { BlockData } from "@/lib/GuiEditor/type"
-
-import FreeEditor from "./FreeEditor"
 
 type CodeEditorTabProps = {
   onOpenChange: (isOpen: boolean) => void
@@ -40,20 +40,20 @@ const CodeEditorTab = ({ onOpenChange, openApi, scenario }: CodeEditorTabProps) 
         {node != null && (
           <Tabs.Trigger
             value="free"
-            className="text-white/60 font-bold text-sm py-2 data-active:text-white/90 transition"
+            className="text-white/60 font-bold text-sm py-2 data-active:text-white/90 transition data-active:text-white"
           >
             {node.data.operationId}
           </Tabs.Trigger>
         )}
         <Tabs.Trigger
           value="scenario"
-          className="text-white/60 font-bold text-sm py-2 data-active:text-white/90 transition"
+          className="text-white/60 font-bold text-sm py-2 data-active:text-white/90 transition data-active:text-white"
         >
           Test Scenario
         </Tabs.Trigger>
         <Tabs.Trigger
           value="openapi"
-          className="text-white/60 font-bold text-sm py-2 data-active:text-white/90 transition"
+          className="text-white/60 font-bold text-sm py-2 data-active:text-white/90 transition data-active:text-white"
         >
           Open API
         </Tabs.Trigger>
