@@ -6,6 +6,12 @@ process.once("loaded", () => {
 
 const ipcApis = {
   execScenario: (dumped: string) => ipcRenderer.invoke("exec-scenario", dumped),
+  getOpenApiSpec: () =>
+    ipcRenderer.invoke("get-open-api-file") as Promise<{
+      content: string
+      path: string
+      format: "json" | "yaml"
+    } | null>,
 }
 
 contextBridge.exposeInMainWorld("ipc", ipcApis)

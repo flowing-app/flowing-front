@@ -9,7 +9,7 @@ import { BlockData } from "@/lib/GuiEditor/type"
 import { HTTP_METHODS_COLORS } from "@/utils/httpMethod"
 import { useBodyEditState } from "@/store/bodyEdit"
 import { useStore } from "@/store"
-import InlineEditor from "@/app/_component/InlineEditor"
+import InlineEditor from "@/app/edit/_component/InlineEditor"
 
 const ApiCallNode = ({ id, selected, data }: NodeProps<BlockData>) => {
   const updateNodeData = useStore((store) => store.updateNodeData)

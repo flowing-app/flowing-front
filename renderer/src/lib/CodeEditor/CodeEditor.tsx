@@ -1,20 +1,25 @@
 import React, { memo } from "react"
 import MonacoEditor from "@monaco-editor/react"
 
-type CodeEditorProps = { value: string; onChange: (value: string) => void; language: string }
+import { useStore } from "@/store"
+
+type CodeEditorProps = { language: string }
 
 const CodeEditor = ({
-  value,
-  onChange,
   language,
   options,
   ...props
 }: CodeEditorProps & React.ComponentPropsWithoutRef<typeof MonacoEditor>) => {
+  const { openApi, setOpenApi } = useStore((store) => ({
+    openApi: store.openApi,
+    setOpenApi: store.setOpenApi,
+  }))
+
   return (
     <MonacoEditor
       height="calc(100vh - 32px)"
-      value={value}
-      onChange={(value) => onChange(value ?? "")}
+      value={openApi ?? ""}
+      onChange={(value) => setOpenApi(value ?? "")}
       defaultLanguage={language}
       theme="vs-dark"
       language={language}

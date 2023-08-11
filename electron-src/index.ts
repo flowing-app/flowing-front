@@ -1,8 +1,9 @@
 import { join } from "path"
 import { format } from "url"
 import { ChildProcess } from "child_process"
+import fs from "fs/promises"
 
-import { BrowserWindow, app, ipcMain } from "electron"
+import { BrowserWindow, app, dialog, ipcMain } from "electron"
 import isDev from "electron-is-dev"
 import prepareNext from "electron-next"
 
@@ -18,6 +19,31 @@ app.on("ready", async () => {
     console.log("==data==========")
     console.log(data.results[0])
     return data
+  })
+
+  ipcMain.handle("get-open-api-file", async () => {
+    const res = await dialog.showOpenDialog({
+      properties: ["openFile", "createDirectory"],
+      message: "Open API の定義ファイルを選択",
+      filters: [{ name: "Open API", extensions: ["yml", "yaml", "json", "txt"] }],
+    })
+    if (res.canceled) {
+      return
+    }
+    const filePath = res.filePaths[0]
+    if (filePath == null) {
+      return
+    }
+
+    const buffer = await fs.readFile(filePath)
+    const utf8decoder = new TextDecoder()
+    const str = utf8decoder.decode(new Uint8Array(buffer))
+    // TODO: 最近開いたファイルの追加 https://www.electronjs.org/ja/docs/latest/tutorial/recent-documents
+    return {
+      content: str,
+      path: filePath,
+      format: filePath.split(".").pop() === "json" ? "json" : "yaml",
+    }
   })
 
   await prepareNext("./renderer")
