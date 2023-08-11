@@ -1,7 +1,7 @@
 import React from "react"
 import { Handle, NodeProps, Position } from "reactflow"
 import TextareaAutosize from "react-textarea-autosize"
-import { FiEdit } from "react-icons/fi"
+import { FiCheck, FiEdit, FiMinus, FiX } from "react-icons/fi"
 
 import SectionAccordion from "./SectionAccordion"
 
@@ -17,6 +17,24 @@ const ApiCallNode = ({ id, selected, data }: NodeProps<BlockData>) => {
 
   return (
     <div className="relative">
+      <div className="absolute bottom-full mb-2">
+        {data.result === "failure" ? (
+          <div className="p-2 flex items-center bg-red-500 text-white rounded">
+            <FiX size={24} />
+            失敗
+          </div>
+        ) : data.result === "skipped" ? (
+          <div className="p-2 flex items-center bg-slate-400 text-white rounded">
+            <FiMinus size={24} />
+            未実行
+          </div>
+        ) : data.result === "success" ? (
+          <div className="p-2 flex items-center bg-green-600 text-white rounded">
+            <FiCheck size={24} />
+            成功
+          </div>
+        ) : null}
+      </div>
       <section
         style={{ height: "max-content", width: "300px" }}
         data-selected={selected}

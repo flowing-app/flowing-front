@@ -27,4 +27,5 @@ export type BlockData = {
       if: string
       loop: Loop
     }
+    result: "success" | "failure" | "skipped" | null
   }
