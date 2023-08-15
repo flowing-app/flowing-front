@@ -56,7 +56,7 @@ export const Editor = ({ blocks }: EditorProps) => {
             {...deletableEdgeProps}
             {...dragProps}
           >
-            <Background color="#efefef" variant={BackgroundVariant.Lines} />
+            <Background color="#F2F5FA" variant={BackgroundVariant.Lines} />
             <MiniMap />
             <Controls />
           </ReactFlow>
