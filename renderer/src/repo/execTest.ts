@@ -1,7 +1,7 @@
 import { Node } from "reactflow"
 import { dump } from "js-yaml"
 
-import { BlockData } from "@/lib/GuiEditor/type"
+import { BlockData, Meta, Variable } from "@/lib/GuiEditor/type"
 import { ipc } from "@/utils/ipc"
 import { convertNodesToSteps } from "@/logic/convertNodeToSteps"
 
@@ -23,16 +23,20 @@ export type ExecTestResult = {
   ]
 }
 
-export const execTest = async (nodes: Node<BlockData>[]): Promise<ExecTestResult> => {
+export const execTest = async (
+  nodes: Node<BlockData>[],
+  variables: Variable[],
+  meta: Meta,
+): Promise<ExecTestResult> => {
   // 各ステップ情報を runn 形式に変換する
   const scenario = convertNodesToSteps({
-    nodes,
-    title: "API Test",
-    reqUrl: "http://127.0.0.1:8084",
+    nodePath: nodes,
+    title: meta.title,
+    reqUrl: meta.reqUrl,
+    variables,
   })
 
   const dumped = dump(scenario)
-
   const res: ExecTestResult = await ipc.execScenario(dumped)
   return res
 }

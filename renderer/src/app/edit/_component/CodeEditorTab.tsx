@@ -1,50 +1,37 @@
-import React, { memo, useEffect, useState } from "react"
+import React, { memo, useState } from "react"
 import * as Tabs from "@radix-ui/react-tabs"
 import { FiX } from "react-icons/fi"
-import { Node } from "reactflow"
 
-import FreeEditor from "./FreeEditor"
+import ScenarioEditor from "./ScenarioEditor"
 
-import { useBodyEditState } from "@/store/bodyEdit"
-import { useStore } from "@/store"
-import { BlockData } from "@/lib/GuiEditor/type"
+import CodeEditor from "@/lib/CodeEditor/CodeEditor"
 
 type CodeEditorTabProps = {
   onOpenChange: (isOpen: boolean) => void
-  openApi: React.ReactElement
-  scenario: React.ReactElement
 }
 
-const CodeEditorTab = ({ onOpenChange, openApi, scenario }: CodeEditorTabProps) => {
+const CodeEditorTab = ({ onOpenChange }: CodeEditorTabProps) => {
   const [tab, setTab] = useState("scenario")
-  const { nodeId, update } = useBodyEditState()
-  const node = useStore((store) => store.nodes.find((node) => node.id === nodeId) ?? null) as
-    | Node<BlockData>
-    | undefined
+  // const { nodeId, update } = useBodyEditState()
+  // const node = useStore((store) => store.nodes.find((node) => node.id === nodeId) ?? null) as
+  //   | Node<BlockData>
+  //   | undefined
 
   const handleClose = () => {
-    update(null)
+    // update(null)
     onOpenChange(false)
   }
 
-  useEffect(() => {
-    if (nodeId != null) {
-      setTab("free")
-      onOpenChange(true)
-    }
-  }, [nodeId, onOpenChange])
+  // useEffect(() => {
+  //   if (nodeId != null) {
+  //     setTab("free")
+  //     onOpenChange(true)
+  //   }
+  // }, [nodeId, onOpenChange])
 
   return (
     <Tabs.Root value={tab} onValueChange={setTab}>
       <Tabs.List className="flex items-center gap-8">
-        {node != null && (
-          <Tabs.Trigger
-            value="free"
-            className="text-white/60 font-bold text-sm py-2 data-active:text-white/90 transition data-active:text-white"
-          >
-            {node.data.operationId}
-          </Tabs.Trigger>
-        )}
         <Tabs.Trigger
           value="scenario"
           className="text-white/60 font-bold text-sm py-2 data-active:text-white/90 transition data-active:text-white"
@@ -61,13 +48,12 @@ const CodeEditorTab = ({ onOpenChange, openApi, scenario }: CodeEditorTabProps) 
           <FiX className="text-white" />
         </button>
       </Tabs.List>
-      {node != null && (
-        <Tabs.Content value="free">
-          <FreeEditor node={node} />
-        </Tabs.Content>
-      )}
-      <Tabs.Content value="scenario">{scenario}</Tabs.Content>
-      <Tabs.Content value="openapi">{openApi}</Tabs.Content>
+      <Tabs.Content value="scenario">
+        <ScenarioEditor />
+      </Tabs.Content>
+      <Tabs.Content value="openapi">
+        <CodeEditor onChange={() => {}} language="yaml" />
+      </Tabs.Content>
     </Tabs.Root>
   )
 }

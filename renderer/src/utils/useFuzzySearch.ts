@@ -5,7 +5,7 @@ export const getSearcher = <Item extends string | object>(
   items: Item[],
   keySelector: (item: Item) => string,
 ) => {
-  const searcher = new Searcher(items, { keySelector, threshold: 0 })
+  const searcher = new Searcher(items, { keySelector, threshold: 0.5 })
   return (query: string) => searcher.search(query)
 }
 

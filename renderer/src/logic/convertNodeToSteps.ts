@@ -1,18 +1,61 @@
 import { Node } from "reactflow"
 
+import { BlockData, Variable } from "@/lib/GuiEditor/type"
+
 type ConvertNodesToStepsArg = {
-  nodes: Node[]
+  nodePath: Node[]
   title: string
   reqUrl: string
+  variables: Variable[]
 }
 
-export const convertNodesToSteps = ({ nodes, title, reqUrl }: ConvertNodesToStepsArg) => {
-  const steps = nodes.reduce((steps, node) => {
+export const convertNodesToSteps = ({
+  nodePath,
+  title,
+  reqUrl,
+  variables,
+}: ConvertNodesToStepsArg) => {
+  const steps = nodePath.reduce((steps, node) => {
     if (node.type !== "api-call") return steps
-    const data = node.data
+    const data: BlockData = node.data
+
+    const headerParameters = data.input.parameters.header
+    const headerObj =
+      headerParameters.length === 0
+        ? {}
+        : {
+            headers: Object.fromEntries(headerParameters.map(([_, key, value]) => [key, value])),
+          }
+
+    const cookieParameters = data.input.parameters.cookie
+    const cookieObj =
+      cookieParameters.length === 0
+        ? {}
+        : {
+            cookies: Object.fromEntries(cookieParameters.map(([_, key, value]) => [key, value])),
+          }
+
+    let path = data.path
+
+    const queryParameter = data.input.parameters.query.reduce((params, [_, key, value]) => {
+      if (0 < value.length) {
+        params.append(key, value)
+      }
+      return params
+    }, new URLSearchParams())
+    const queryStr = queryParameter.toString()
+
+    if (0 < queryStr.length) {
+      path += `?${queryStr}`
+    }
+
+    data.input.parameters.path.forEach(([_, key, value]) => {
+      path = path.replaceAll(`{${key}}`, value)
+    })
+
     return {
       ...steps,
-      [data.input.summary ?? data.operationId!]: {
+      [data.input.summary || data.operationId!]: {
         if: data.input.if === "true" ? undefined : data.input.if,
         loop:
           data.input.loop.count === 1
@@ -21,8 +64,10 @@ export const convertNodesToSteps = ({ nodes, title, reqUrl }: ConvertNodesToStep
                 count: data.input.loop.count,
               },
         req: {
-          [data.path]: {
+          [path]: {
             [data.method]: {
+              ...headerObj,
+              ...cookieObj,
               body: {
                 "application/json": data.input.body,
               },
@@ -33,11 +78,17 @@ export const convertNodesToSteps = ({ nodes, title, reqUrl }: ConvertNodesToStep
       },
     }
   }, {})
+
+  const vars =
+    variables.length === 0
+      ? {}
+      : { vars: Object.fromEntries(variables.map(({ label, value }) => [label, value])) }
   return {
     desc: title,
     runners: {
       req: reqUrl,
     },
+    ...vars,
     debug: true,
     steps,
   }

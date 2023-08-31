@@ -9,7 +9,7 @@ const Editor = dynamic(() => import("./_component/Editor"), {
 
 const IndexPage = () => {
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col w-full h-full overflow-hidden">
       <Editor />
     </div>
   )

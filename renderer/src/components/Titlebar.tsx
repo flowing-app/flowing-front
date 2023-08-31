@@ -9,7 +9,7 @@ const Titlebar = () => {
   const router = useRouter()
 
   return (
-    <div className="titlebar border-b bg-white pl-[100px] border-slate-200 flex items-center p-4 gap-x-2 text-slate-600">
+    <div className="titlebar border-b bg-white pl-[100px] z-10 border-slate-200 flex items-center p-4 gap-x-2 text-slate-600">
       <div className="flex items-center gap-x-1">
         <button className="p-2 hover:bg-slate-100 rounded" onClick={() => router.back()}>
           <FiChevronLeft size={18} />

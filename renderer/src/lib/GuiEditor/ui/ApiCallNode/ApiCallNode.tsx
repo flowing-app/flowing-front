@@ -2,46 +2,16 @@ import React, { useState } from "react"
 import { Handle, NodeProps, Position } from "reactflow"
 import { FiCheck, FiChevronDown, FiEdit2, FiMinus, FiPlus, FiX } from "react-icons/fi"
 import TextareaAutosize from "react-textarea-autosize"
-import clsx from "clsx"
+
+import ChipButton from "./ChipButton"
 
 import { BlockData } from "@/lib/GuiEditor/type"
 import { useBodyEditState } from "@/store/bodyEdit"
 import { useStore } from "@/store"
-import { HTTP_METHODS_COLORS } from "@/utils/httpMethod"
 import InlineEditor from "@/app/edit/_component/InlineEditor"
-
-const Card = ({
-  children,
-  selected,
-  compact,
-  className,
-}: {
-  children: React.ReactNode
-  selected?: boolean
-  compact?: boolean
-  className?: string
-}) => (
-  <div
-    data-selected={selected}
-    className={clsx(
-      "bg-white data-[selected='true']:ring h-max ring-sky-300 shadow-lg text-slate-600 rounded-lg overflow-hidden border border-slate-300 flex flex-col gap-y-2",
-      compact ? "px-4 py-2 border-slate-200/80" : "p-4 border-slate-300",
-      className,
-    )}
-  >
-    {children}
-  </div>
-)
-
-const Chip = ({ children, onClick }: { children: React.ReactNode; onClick: () => void }) => (
-  <button
-    onClick={onClick}
-    className="flex items-center bg-white text-sky-600/80 border cursor-pointer border-sky-600/20 hover:bg-sky-50 rounded-full pl-3 pr-4 py-1 leading-none"
-  >
-    <FiPlus />
-    <div className="text-sm">{children}</div>
-  </button>
-)
+import { convertOperationIdToReadableCase } from "@/utils/convertOperationIdCase"
+import MethodChip from "@/components/MethodChip"
+import Card from "@/components/Card"
 
 const ApiCallNode = ({ id, selected, data }: NodeProps<BlockData>) => {
   const updateNodeData = useStore((store) => store.updateNodeData)
@@ -53,6 +23,8 @@ const ApiCallNode = ({ id, selected, data }: NodeProps<BlockData>) => {
   const [showTest, setShowTest] = useState(false)
   const [showSkip, setShowSkip] = useState(false)
   const [showRepeat, setShowRepeat] = useState(false)
+
+  const showOperationId = useStore((store) => store.showOperationId)
 
   return (
     <div className="relative">
@@ -78,15 +50,10 @@ const ApiCallNode = ({ id, selected, data }: NodeProps<BlockData>) => {
       <div className="flex items-center flex-col gap-y-2">
         <Card selected={selected} className="w-[400px]">
           <div className="flex items-center">
-            <span
-              className="leading-none text-white font-bold px-2 py-1 rounded block mr-4"
-              style={{
-                background: HTTP_METHODS_COLORS[data.method],
-              }}
-            >
-              {data.method.toUpperCase().slice(0, 3)}
+            <MethodChip className="mr-4">{data.method}</MethodChip>
+            <span className="text-xl block break-all font-bold">
+              {showOperationId ? convertOperationIdToReadableCase(data.operationId) : data.path}
             </span>
-            <span className="text-xl block break-all font-bold">{data.path}</span>
           </div>
           <div className="px-3 flex h-1">
             <div className="w-full flex flex-col items-start gap-y-4 flex-1">
@@ -118,8 +85,8 @@ const ApiCallNode = ({ id, selected, data }: NodeProps<BlockData>) => {
           </div>
           <div>
             <TextareaAutosize
-              className="bg-transparent focus:outline-none py-2 resize-none w-full text-slate-500 text-sm"
-              placeholder="説明を入力"
+              className="bg-transparent focus:outline-none py-2 resize-none w-full text-slate-500"
+              placeholder="IDを入力"
               value={data.input.summary}
               maxRows={1}
               onChange={(e) => {
@@ -130,15 +97,20 @@ const ApiCallNode = ({ id, selected, data }: NodeProps<BlockData>) => {
             />
           </div>
           <div className="flex w-full flex-wrap gap-2">
-            <button onClick={() => update(id)}>
-              <div className="flex items-center gap-x-1 bg-white text-slate-600/80 border cursor-pointer border-slate-600/20 hover:bg-slate-50 rounded-full pl-3 pr-4 py-2 leading-none">
-                <FiEdit2 size={12} />
-                <div>Body</div>
-              </div>
-            </button>
-            <div className="w-[2px] h-[32px] bg-slate-200" />
-            {!addSkip && <Chip onClick={() => setAddSkip(true)}>実行条件</Chip>}
-            {!addRepeat && <Chip onClick={() => setAddRepeat(true)}>繰り返し回数</Chip>}
+            <ChipButton color="gray" icon={FiEdit2} onClick={() => update(id)}>
+              Edit
+            </ChipButton>
+            {(!addSkip || !addRepeat) && <div className="w-[2px] h-[32px] bg-slate-200" />}
+            {!addSkip && (
+              <ChipButton color="blue" icon={FiPlus} onClick={() => setAddSkip(true)}>
+                実行条件
+              </ChipButton>
+            )}
+            {!addRepeat && (
+              <ChipButton color="blue" icon={FiPlus} onClick={() => setAddRepeat(true)}>
+                繰り返し回数
+              </ChipButton>
+            )}
           </div>
         </Card>
         <Card className="w-[360px] ml-[40px]" compact>
@@ -202,7 +174,7 @@ const ApiCallNode = ({ id, selected, data }: NodeProps<BlockData>) => {
               className="flex w-full items-center justify-between"
             >
               <div className="bg-slate-200 text-sm w-max font-bold px-2 rounded py-1.5 leading-none text-slate-600">
-                繰り返し回数
+                繰り返し
               </div>
               <div>
                 <FiChevronDown />

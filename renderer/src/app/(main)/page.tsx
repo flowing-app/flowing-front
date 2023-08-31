@@ -13,11 +13,14 @@ const UploadPage = () => {
   const setOpenApi = useStore((store) => store.setOpenApi)
 
   const handleGetOpenApiSpec = async () => {
-    const res = await ipc.getOpenApiSpec()
+    const res = await ipc.getOpenApiFile()
     if (res == null) {
       return
     }
-    setOpenApi(res.content, res.format)
+    setOpenApi(
+      res.content,
+      (["json", "yaml"] as const).find((f) => f === res.format),
+    )
     router.push("/edit")
   }
 

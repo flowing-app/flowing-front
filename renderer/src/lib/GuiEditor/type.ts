@@ -26,6 +26,19 @@ export type BlockData = {
       body: Json
       if: string
       loop: Loop
+      parameters: {
+        header: [id: string, key: string, value: string, editable: boolean][]
+        path: [id: string, key: string, value: string, editable: boolean][]
+        query: [id: string, key: string, value: string, editable: boolean][]
+        cookie: [id: string, key: string, value: string, editable: boolean][]
+      }
     }
     result: "success" | "failure" | "skipped" | null
   }
+
+export type Variable = { id: string; label: string; value: string }
+
+export type Meta = {
+  title: string
+  reqUrl: string
+}

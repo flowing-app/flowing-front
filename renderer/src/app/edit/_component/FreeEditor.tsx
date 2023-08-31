@@ -22,7 +22,6 @@ const FreeEditor = ({ node }: FreeEditorProps) => {
     }
 
     const dispose = editor.onDidChangeModelContent(() => {
-      console.log("CHANGE")
       const editorModel = editor.getModel()
       if (editorModel == null) {
         return

@@ -13,7 +13,7 @@ import {
   applyEdgeChanges,
 } from "reactflow"
 
-import { BlockData } from "@/lib/GuiEditor/type"
+import { BlockData, Meta, Variable } from "@/lib/GuiEditor/type"
 import { resolveNodes } from "@/logic/resolveNodes"
 
 const initialNodes = [{ id: "start", type: "start", data: {}, position: { x: 100, y: 100 } }]
@@ -21,20 +21,28 @@ const initialNodes = [{ id: "start", type: "start", data: {}, position: { x: 100
 export type RFSlice = {
   nodes: Node[]
   edges: Edge[]
+  variables: Variable[]
+  meta: Meta
   setNodes: React.Dispatch<React.SetStateAction<Node<any>[]>>
   onNodesChange: OnNodesChange
   setEdges: React.Dispatch<React.SetStateAction<Edge<any>[]>>
   onEdgesChange: OnEdgesChange
   onConnect: OnConnect
   updateNodeData: (id: string, data: Partial<BlockData>) => void
-
+  setVariables: (variables: Variable[]) => void
+  setMeta: (meta: Partial<Meta>) => void
   getFlow: () => { nodes: Node[]; edges: Edge[] }
-  getResolvedNodes: () => Node[]
+  // getResolvedNodes: () => Node[][]
 }
 
 export const createRfSlice: StateCreator<RFSlice, [], [], RFSlice> = (set, get) => ({
   nodes: initialNodes,
   edges: [],
+  variables: [],
+  meta: {
+    title: "API Test",
+    reqUrl: "http://127.0.0.1:8084",
+  },
   setNodes: (update) => {
     if (typeof update === "function") {
       set(({ nodes }) => ({ nodes: update(nodes) }))
@@ -73,7 +81,12 @@ export const createRfSlice: StateCreator<RFSlice, [], [], RFSlice> = (set, get) 
       }
     })
   },
-
+  setVariables: (variables) => {
+    set({ variables })
+  },
+  setMeta: (meta) => {
+    set({ meta: { ...get().meta, ...meta } })
+  },
   getFlow: () => {
     const { nodes, edges } = get()
     return { nodes, edges }
@@ -82,4 +95,8 @@ export const createRfSlice: StateCreator<RFSlice, [], [], RFSlice> = (set, get) 
     const { nodes, edges } = get()
     return resolveNodes(nodes, edges)
   },
+  // getVariables: () => {
+  //   const { variables } = get()
+  //   return variables
+  // },
 })

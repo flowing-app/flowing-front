@@ -12,7 +12,7 @@ const Layout = ({ children }: LayoutProps) => {
     <html lang="ja">
       <body className="flex flex-col">
         <Titlebar />
-        <div className="w-full grow">{children}</div>
+        <div className="w-full relative overflow-hidden">{children}</div>
       </body>
     </html>
   )

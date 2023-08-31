@@ -17,6 +17,7 @@
     "@apidevtools/json-schema-ref-parser": "10.0.1",
     "@monaco-editor/react": "^4.5.1",
     "@radix-ui/react-dialog": "^1.0.4",
+    "@radix-ui/react-switch": "^1.0.3",
     "@radix-ui/react-tabs": "^1.0.4",
     "clsx": "^2.0.0",
     "electron-is-dev": "^2.0.0",

@@ -4,19 +4,17 @@ import { load } from "js-yaml"
 import { OpenAPIV3_1 } from "openapi-types"
 
 import CodeEditorTab from "./CodeEditorTab"
-import ScenarioEditor from "./ScenarioEditor"
-import BottomBar from "./BottomBar"
+import NodeConfigDrawer from "./NodeConfigDrawer"
+import GlobalConfigDrawer from "./GlobalConfigDrawer"
+import EditorHeader from "./EditorHeader/EditorHeader"
 
 import { Editor } from "@/lib/GuiEditor"
-import CodeEditor from "@/lib/CodeEditor/CodeEditor"
 import CollapsablePanel from "@/lib/CollapsablePanel/CollapsablePanel"
 import { retrieveBlockFromOpenApiSpec } from "@/utils/retrieveBlockFromOpenApiSpec"
 import { Initializer } from "@/lib/CodeEditor"
 import { useStore } from "@/store"
 
 const EditorPage = () => {
-  const execTest = useStore((store) => store.execTest)
-
   const { data: blocks } = useSWR("parse-blocks", () =>
     retrieveBlockFromOpenApiSpec(
       load(useStore.getState().openApi ?? "") as OpenAPIV3_1.Document<{}>,
@@ -26,19 +24,17 @@ const EditorPage = () => {
   return (
     <>
       <Initializer />
-      <div className="w-screen h-screen">
-        {blocks != null && <Editor blocks={blocks} />}
-        <CollapsablePanel>
-          {({ onOpenChange }) => (
-            <CodeEditorTab
-              onOpenChange={onOpenChange}
-              scenario={<ScenarioEditor />}
-              openApi={<CodeEditor onChange={() => {}} language="yaml" />}
-            />
-          )}
-        </CollapsablePanel>
+      <div className="w-screen h-[calc(100vh-48px)]">
+        <EditorHeader />
+        <div className="relative h-[calc(100vh-48px-40px)] overflow-hidden">
+          {blocks != null && <Editor blocks={blocks} />}
+          <CollapsablePanel>
+            {({ onOpenChange }) => <CodeEditorTab onOpenChange={onOpenChange} />}
+          </CollapsablePanel>
+          <GlobalConfigDrawer />
+          <NodeConfigDrawer />
+        </div>
       </div>
-      <BottomBar onExec={execTest} />
     </>
   )
 }
