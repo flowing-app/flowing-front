@@ -17,9 +17,11 @@ export type BlockData = {
   id: string
   path: string
   method: HttpMethod
-  // summary?: string
   operationId: string
 } & Omit<OpenAPIV3_1.OperationObject, "method" | "id"> & {
+    branch: boolean
+    isAiSuggest: boolean
+
     input: {
       test: string
       summary: string
@@ -32,6 +34,7 @@ export type BlockData = {
         query: [id: string, key: string, value: string, editable: boolean][]
         cookie: [id: string, key: string, value: string, editable: boolean][]
       }
+      scenarioTitle: string
     }
     result: "success" | "failure" | "skipped" | null
   }

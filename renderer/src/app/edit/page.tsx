@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic"
 import React from "react"
 
-const Editor = dynamic(() => import("./_component/Editor"), {
+const Editor = dynamic(() => import("./component/Editor"), {
   ssr: false,
 })
 

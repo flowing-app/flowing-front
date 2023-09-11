@@ -13,6 +13,7 @@ import CollapsablePanel from "@/lib/CollapsablePanel/CollapsablePanel"
 import { retrieveBlockFromOpenApiSpec } from "@/utils/retrieveBlockFromOpenApiSpec"
 import { Initializer } from "@/lib/CodeEditor"
 import { useStore } from "@/store"
+import AiInput from "@/app/edit/component/AiInput/AiInput"
 
 const EditorPage = () => {
   const { data: blocks } = useSWR("parse-blocks", () =>
@@ -34,6 +35,7 @@ const EditorPage = () => {
           <GlobalConfigDrawer />
           <NodeConfigDrawer />
         </div>
+        <AiInput />
       </div>
     </>
   )

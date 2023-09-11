@@ -1,11 +1,14 @@
 import { StateCreator } from "zustand"
 import { Edge, Node } from "reactflow"
+import { dump } from "js-yaml"
 
 import { MetaSlice } from "./meta"
 
 import { ExecTestResult, execTest } from "@/repo/execTest"
 import { resolveNodes } from "@/logic/resolveNodes"
 import { BlockData, Meta, Variable } from "@/lib/GuiEditor/type"
+import { convertNodesToSteps } from "@/logic/convertNodeToSteps"
+import { ipc } from "@/utils/ipc"
 
 export type InputSlice = {
   nodes: Node[]
@@ -29,7 +32,7 @@ export const createServiceSlice: StateCreator<
   result: null,
   execTest: async () => {
     const { nodes, edges, variables, meta } = get()
-    const resolvedNodes = resolveNodes(nodes, edges)
+    const { nodePath: resolvedNodes } = resolveNodes(nodes, edges)
     const result = await execTest(resolvedNodes, variables, meta)
     set({ result })
 
@@ -49,26 +52,28 @@ export const createServiceSlice: StateCreator<
   },
   saveScenarioFile: async () => {
     const { nodes, edges, variables, meta, fileMeta } = get()
-    const resolvedNodes = resolveNodes(nodes, edges)
-    console.log(resolvedNodes)
-    // const scenario = convertNodesToSteps({
-    //   nodes: resolvedNodes,
-    //   title: meta.title,
-    //   reqUrl: meta.reqUrl,
-    //   variables,
-    // })
+    const { nodePath: resolvedNodes, scenarioMap } = resolveNodes(nodes, edges)
+    const files = resolvedNodes
+      .map(({ nodePath }) => ({
+        title: meta.title,
+        body: convertNodesToSteps({
+          nodePath,
+          title: meta.title,
+          reqUrl: meta.reqUrl,
+          variables,
+        }),
+      }))
+      .map(({ title, body }) => ({ title, body: dump(body) }))
 
-    // const yaml = dump(scenario)
+    const path = await ipc.saveScenarioFile({
+      title: fileMeta.title ?? meta.title,
+      openApiPath: fileMeta.openApi ?? undefined,
+      path: fileMeta.path ?? undefined,
+      files,
+    })
 
-    // const path = await ipc.saveScenarioFile({
-    //   title: fileMeta.title ?? meta.title,
-    //   openApiPath: fileMeta.openApi ?? undefined,
-    //   path: fileMeta.path ?? undefined,
-    //   yaml,
-    // })
-
-    // if (path != null) {
-    //   set((prev) => ({ ...prev, fileMeta: { ...prev.fileMeta, path } }))
-    // }
+    if (path != null) {
+      set((prev) => ({ ...prev, fileMeta: { ...prev.fileMeta, path } }))
+    }
   },
 })

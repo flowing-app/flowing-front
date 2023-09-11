@@ -63,6 +63,7 @@ export const retrieveBlockFromOpenApiSpec = async (
             loop: {
               count: 1,
             },
+            scenarioTitle: "",
           },
           result: null,
           ...data,

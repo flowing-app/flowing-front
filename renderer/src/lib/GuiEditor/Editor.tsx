@@ -1,11 +1,10 @@
-import React, { useState } from "react"
+import React, { useEffect } from "react"
 import ReactFlow, {
   MiniMap,
   Controls,
   Background,
   BackgroundVariant,
   ReactFlowProvider,
-  ReactFlowInstance,
 } from "reactflow"
 
 import ApiCallNode from "./ui/ApiCallNode/ApiCallNode"
@@ -28,16 +27,31 @@ type EditorProps = {
 }
 
 export const Editor = ({ blocks }: EditorProps) => {
-  const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null)
-  const { nodes, setNodes, onNodesChange, edges, setEdges, onEdgesChange, onConnect } = useStore()
+  // const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null)
+  const {
+    nodes,
+    addNode,
+    onNodesChange,
+    edges,
+    reactFlowInstance,
+    setEdges,
+    onEdgesChange,
+    onConnect,
+    registerBlocks,
+    setReactFlowInstance,
+  } = useStore()
 
   const deletableEdgeProps = useDeletableEdge(setEdges)
-  const { reactFlowWrapper, dragProps } = useDropToAddEditor(reactFlowInstance, setNodes)
+  const { reactFlowWrapper, dragProps } = useDropToAddEditor(reactFlowInstance, addNode)
+
+  useEffect(() => {
+    registerBlocks(blocks)
+  }, [blocks, registerBlocks])
 
   return (
     <ReactFlowProvider>
       <div className="w-full h-full flex">
-        <Dock blocks={blocks} />
+        <Dock />
         <div className="grow" ref={reactFlowWrapper}>
           <ReactFlow
             nodes={nodes}

@@ -43,10 +43,15 @@ export const ipcHandlers = {
     _,
     {
       path: savePath,
-      yaml,
+      files,
       title,
       openApiPath,
-    }: { path?: string; yaml: string; title: string; openApiPath?: string },
+    }: {
+      path?: string
+      files: { title: string; body: string }[]
+      title: string
+      openApiPath?: string
+    },
   ) => {
     if (savePath == null) {
       const res = await dialog.showOpenDialog({
@@ -69,10 +74,15 @@ export const ipcHandlers = {
         path.join(dirPath, "meta.json"),
         JSON.stringify({ title, open_api_path: openApiPath, engine: "runn" }),
       )
-      await fs.writeFile(path.join(scenarioPath, "scenario1.yml"), yaml)
+
+      await Promise.all(
+        files.map((file) => fs.writeFile(path.join(scenarioPath, `${file.title}.yml`), file.body)),
+      )
       return dirPath
     } else {
-      await fs.writeFile(path.join(savePath, "runn", "scenario1.yml"), yaml)
+      await Promise.all(
+        files.map((file) => fs.writeFile(path.join(savePath, `${file.title}.yml`), file.body)),
+      )
     }
   },
 } satisfies BaseIpcHandlers

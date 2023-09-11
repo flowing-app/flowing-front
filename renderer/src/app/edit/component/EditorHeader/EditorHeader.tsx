@@ -1,8 +1,9 @@
 import React, { useState } from "react"
-import { FiPlay, FiSave, FiSettings } from "react-icons/fi"
+import { FiSave, FiSettings } from "react-icons/fi"
 
 import HeaderButton from "./HeaderButton"
 import SaveConfigDrawer from "./SaveConfigDrawer"
+import ExecButtonts from "./ExecButtonts"
 
 import { useStore } from "@/store"
 
@@ -32,10 +33,7 @@ const EditorHeader = () => {
       >
         <div />
         <div className="place-self-center">
-          <HeaderButton onClick={execTest}>
-            <FiPlay size={14} />
-            <div className="text-sm font-bold leading-none">実行する</div>
-          </HeaderButton>
+          <ExecButtonts onExec={execTest} />
         </div>
         <div className="flex items-center justify-end gap-x-2">
           <HeaderButton onClick={handleClickSaveScenario}>

@@ -20,18 +20,25 @@ export const resolveNodes = (nodes: Node<BlockData>[], edges: Edge[]) => {
   }, {})
 
   // 木構造から、ノード ID のパスを計算
-  const idPathList = calcTreePaths(
+  const {
+    paths: idPathList,
+    branchIds,
+    scenarioMap,
+  } = calcTreePaths(
     edges.map((edge) => [edge.source, edge.target]),
     startNode.id,
   )
 
   // ノード ID のパスを、ノードのパスに変換
-  return idPathList.map((idPath) => {
-    const lastNodeId = idPath[idPath.length - 1]!
-    const nodePath = idPath.map((id) => nodeMap[id]!)
-    return {
-      id: lastNodeId,
-      nodePath,
-    }
-  })
+  return {
+    nodePath: idPathList.map(({ path, id }) => {
+      const nodePath = path.map((id) => nodeMap[id]!)
+      return {
+        id,
+        nodePath,
+      }
+    }),
+    branchIds,
+    scenarioMap,
+  }
 }

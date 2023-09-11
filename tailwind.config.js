@@ -8,6 +8,7 @@ module.exports = {
       },
       data: {
         active: "state='active'",
+        highlighted: "highlighted",
       },
     },
   },

@@ -15,6 +15,7 @@ export const convertNodesToSteps = ({
   reqUrl,
   variables,
 }: ConvertNodesToStepsArg) => {
+  console.log(nodePath)
   const steps = nodePath.reduce((steps, node) => {
     if (node.type !== "api-call") return steps
     const data: BlockData = node.data

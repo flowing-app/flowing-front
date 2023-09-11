@@ -2,7 +2,6 @@ import React, { Fragment, useState } from "react"
 import { MdOutlineDragIndicator } from "react-icons/md"
 import { FiSearch } from "react-icons/fi"
 
-import { BlockData } from "./type"
 import { useDropToAdd } from "./hook/useDropToAdd"
 
 import { HTTP_METHODS_COLORS } from "@/utils/httpMethod"
@@ -11,12 +10,9 @@ import Switch from "@/components/Switch"
 import { useStore } from "@/store"
 import { convertOperationIdToReadableCase } from "@/utils/convertOperationIdCase"
 
-type DockProps = {
-  blocks: BlockData[]
-}
-
-const Dock = ({ blocks }: DockProps) => {
+const Dock = () => {
   const { onDragStart } = useDropToAdd()
+  const { blocks } = useStore()
   const [value, setValue] = useState("")
 
   const [showOperationId, setShowOperationId] = useStore((store) => [

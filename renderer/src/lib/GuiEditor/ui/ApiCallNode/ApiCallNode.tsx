@@ -1,14 +1,16 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { Handle, NodeProps, Position } from "reactflow"
-import { FiCheck, FiChevronDown, FiEdit2, FiMinus, FiPlus, FiX } from "react-icons/fi"
+import { FiChevronDown, FiEdit2, FiFlag, FiPlus } from "react-icons/fi"
 import TextareaAutosize from "react-textarea-autosize"
+import clsx from "clsx"
 
 import ChipButton from "./ChipButton"
+import ResultBadge from "./ResultBadge"
 
 import { BlockData } from "@/lib/GuiEditor/type"
 import { useBodyEditState } from "@/store/bodyEdit"
 import { useStore } from "@/store"
-import InlineEditor from "@/app/edit/_component/InlineEditor"
+import InlineEditor from "@/app/edit/component/InlineEditor"
 import { convertOperationIdToReadableCase } from "@/utils/convertOperationIdCase"
 import MethodChip from "@/components/MethodChip"
 import Card from "@/components/Card"
@@ -26,25 +28,59 @@ const ApiCallNode = ({ id, selected, data }: NodeProps<BlockData>) => {
 
   const showOperationId = useStore((store) => store.showOperationId)
 
+  // AIアニメーション用
+  const [initialized, setInitialized] = useState(false)
+  const [initialized2, setInitialized2] = useState(false)
+  useEffect(() => {
+    setInitialized(true)
+  }, [])
+  useEffect(() => {
+    if (initialized) {
+      setInitialized2(true)
+    }
+  }, [initialized])
+
   return (
-    <div className="relative">
-      <div className="absolute bottom-full mb-2">
-        {data.result === "failure" ? (
-          <div className="py-2 px-3 flex items-center bg-red-500 text-white rounded">
-            <FiX size={24} />
-            失敗
+    <div
+      className={clsx(
+        "relative",
+        data.isAiSuggest && "opacity-0",
+        data.isAiSuggest && initialized && !initialized2 && "scale-50 opacity-80",
+        data.isAiSuggest && initialized2 && "scale-100 opacity-100 transition",
+      )}
+    >
+      {data.isAiSuggest && (
+        <div
+          className="absolute -inset-x-2 -inset-y-2 -z-10 rounded-xl"
+          style={{
+            background:
+              "linear-gradient(136deg, #4B68FF 0%, #9162F4 24.54%, #D65CEA 58.79%, #FD347C 98.16%)",
+          }}
+        />
+      )}
+      <div className="absolute bottom-full mb-2 flex flex-col gap-y-4 items-start inset-x-0">
+        <div>{id}</div>
+        {data.branch && (
+          <div className="flex w-full items-center focus-within:before:w-full relative before:bottom-0 before:translate-y-full before:absolute before:left-0 before:transition-[width] before:h-0.5 before:w-0 before:bg-slate-400">
+            <FiFlag size={24} strokeWidth={3} className="shrink-0" />
+            <input
+              type="text"
+              value={data.input.scenarioTitle}
+              onChange={(e) =>
+                updateNodeData(id, {
+                  input: { ...data.input, scenarioTitle: e.target.value },
+                })
+              }
+              className="focus:outline-none px-2 py-1 font-bold leading-none bg-transparent text-lg grow"
+              placeholder="シナリオ名を入力"
+            />
           </div>
-        ) : data.result === "skipped" ? (
-          <div className="py-2 px-3 flex items-center bg-slate-400 text-white rounded">
-            <FiMinus size={24} />
-            未実行
+        )}
+        {data.result != null && (
+          <div>
+            <ResultBadge result={data.result} />
           </div>
-        ) : data.result === "success" ? (
-          <div className="py-2 px-3 flex items-center bg-green-600 text-white rounded">
-            <FiCheck size={24} />
-            成功
-          </div>
-        ) : null}
+        )}
       </div>
 
       <div className="flex items-center flex-col gap-y-2">

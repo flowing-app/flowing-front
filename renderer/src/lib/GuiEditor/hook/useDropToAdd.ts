@@ -1,16 +1,14 @@
 import { useCallback, useMemo, useRef } from "react"
 import { ReactFlowInstance, Node } from "reactflow"
 
-import { genId } from "@/utils/genId"
-
 import { BlockData } from "../type"
+
+import { genId } from "@/utils/genId"
 
 export type TransferObject = {
   type: string
   block: BlockData
 }
-
-type SetNodeFunc = React.Dispatch<React.SetStateAction<Node<{}, string | undefined>[]>>
 
 const getExampleJson = (block: BlockData | undefined) => {
   const requestBody = block?.requestBody
@@ -41,7 +39,7 @@ export const useDropToAdd = () => {
 
 export const useDropToAddEditor = <Elm extends HTMLElement = HTMLDivElement>(
   reactFlowInstance: ReactFlowInstance | null,
-  setNodes: SetNodeFunc,
+  addNode: (node: Node) => void,
 ) => {
   const reactFlowWrapper = useRef<Elm>(null)
 
@@ -79,9 +77,9 @@ export const useDropToAddEditor = <Elm extends HTMLElement = HTMLDivElement>(
         data: transferObject.block,
       }
 
-      setNodes((nds) => nds.concat(newNode))
+      addNode(newNode)
     },
-    [reactFlowInstance, setNodes],
+    [reactFlowInstance, addNode],
   )
 
   return useMemo(
